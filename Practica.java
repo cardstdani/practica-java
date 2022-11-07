@@ -27,11 +27,11 @@ class Practica {
         try {
             URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
             Scanner s = new Scanner(url.openStream());
-            int indexOfWord = (int) (Math.random() * 65780 + 1);
+            int indexOfWord = (int) (Math.random() * 7893600 + 1);
             for (int i = 0; i < indexOfWord-1; i++){
                 word = s.next();
             }
-            //PUTO JAVA NO ME DEJA HACER AQU EL RETURN
+            //PUTO JAVA NO ME DEJA HACER AQUI EL RETURN
         } catch (IOException ex) {
             ex.printStackTrace();
             word = "ERROR";
