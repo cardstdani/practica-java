@@ -9,13 +9,13 @@ class Practica {
         System.out.println("Y dime si la acierto: ");
 
         // GENERAR PALABRA Y ESPERAR ENTRADA DE 0 Y 1 DEL USUARIO
-        System.out.println(generateRandomWord());
+        //System.out.println(generateRandomWord());
 
         try {
-            URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
-            Scanner s = new Scanner(url.openStream());
+            File doc = new File("./Diccionario.txt");
+            Scanner s = new Scanner(doc);
 
-            //System.out.println(s.next());
+            System.out.println(s.next());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -25,8 +25,8 @@ class Practica {
     public static String generateRandomWord() {
         String word = "";
         try {
-            URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
-            Scanner s = new Scanner(url.openStream());
+            File doc = new File("./Diccionario.txt");
+            Scanner s = new Scanner(doc);
             int indexOfWord = (int) (Math.random() * 7893600 + 1);
             for (int i = 0; i < indexOfWord-1; i++){
                 word = s.next();
