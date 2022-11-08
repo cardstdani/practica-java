@@ -4,6 +4,10 @@ import java.util.*;
 import java.io.*;
 
 class Practica {
+    public static boolean checkString(String s1, String s2, String c) {
+        return true;
+    }
+
     public static void main(String[] args) {
         try {
             URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
@@ -22,10 +26,14 @@ class Practica {
                 double score = 0;
 
                 for(int i=0; i<combinations.length; i++) {
-                    //combinations[i];
+                    Iterator dictIterator2 = dict.entrySet().iterator();
+                    while (dictIterator2.hasNext()) {
+                        Map.Entry e = (Map.Entry) dictIterator2.next();
+                        score += checkString((String)e.getKey(), (String)element.getKey(), combinations[i]) ? 1:0;
+                    }
                 }
 
-
+                score/=dict.size();
                 dict.put((String) element.getKey(), score);
                 System.out.println(element.getKey() + " : " + element.getValue());
             }
