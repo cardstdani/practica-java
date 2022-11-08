@@ -15,13 +15,20 @@ class Practica {
                 dict.put(s.next(), 0.0);
             }
 
-            /*Iterator dictIterator = dict.entrySet().iterator();
+            Iterator dictIterator = dict.entrySet().iterator();
             while (dictIterator.hasNext()) {
-
                 Map.Entry element = (Map.Entry) dictIterator.next();
 
-                System.out.println(element.getKey() + " : " + (String) element.getValue());
-            }*/
+                double score = 0;
+
+                for(int i=0; i<combinations.length; i++) {
+                    //combinations[i];
+                }
+
+
+                dict.put((String) element.getKey(), score);
+                System.out.println(element.getKey() + " : " + element.getValue());
+            }
             System.out.println(dict.size());
         } catch (IOException ex) {
 
