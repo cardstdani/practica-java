@@ -5,14 +5,58 @@ import java.io.*;
 
 class Practica {
     public static boolean checkString(String s1, String s2, String c) {
-        boolean out = new Random().nextBoolean();
+        /* PREc.
+        todas las string de length 5
+        */
+        //boolean out = new Random().nextBoolean();
 
-        
-        return out;
+        HashMap<String, Boolean> noEsta = new HashMap<>();
+        HashMap<String, ArrayList<ArrayList<Integer>>> esta = new HashMap<>();
+
+        for (int i = 0; i < s2.length(); i++) {
+            String key = String.valueOf(s2.charAt(i));
+            switch (c.charAt(i)) {
+                case '0': {
+                    noEsta.put(key, true);
+                    break;
+                }
+                case '1': {
+                    if (esta.containsKey(key)) {
+                        esta.get(key).get(1).add(i);
+                    } else {
+                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<ArrayList<Integer>>();
+                        tmp.add(new ArrayList<>(Arrays.asList()));
+                        tmp.add(new ArrayList<>(Arrays.asList(i)));
+                        esta.put(key, tmp);
+                    }
+                    break;
+                }
+                case '2': {
+                    if (esta.containsKey(key)) {
+                        esta.get(key).get(0).add(i);
+                    } else {
+                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<ArrayList<Integer>>();
+                        tmp.add(new ArrayList<>(Arrays.asList(i)));
+                        tmp.add(new ArrayList<>(Arrays.asList()));
+                        esta.put(key, tmp);
+                    }
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < s1.length(); i++) {
+            if(noEsta.containsKey(String.valueOf(s1.charAt(i)))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static void main(String[] args) {
-        try {
+        System.out.println(checkString("HOLAS", "MUNDO", "01102"));
+        /*try {
             URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
             Scanner s = new Scanner(url.openStream());
 
@@ -26,30 +70,31 @@ class Practica {
             while (dictIterator.hasNext()) { //Por cada elemento en dict
                 Map.Entry element = (Map.Entry) dictIterator.next();
 
-                double[] score = new double[combinations.length];
+                double[] partialResult = new double[combinations.length];
 
-                for(int i=0; i<combinations.length; i++) { //Por cada elemento en combinaciones
+                for (int i = 0; i < combinations.length; i++) { //Por cada elemento en combinaciones
+                    double score = 0;
                     Iterator dictIterator2 = dict.entrySet().iterator();
                     while (dictIterator2.hasNext()) { //Por cada elemento en dict
                         Map.Entry e = (Map.Entry) dictIterator2.next();
-                        score[i] += checkString((String)e.getKey(), (String)element.getKey(), combinations[i]) ? 1.0:0.0;
+                        score += checkString((String) e.getKey(), (String) element.getKey(), combinations[i]) ? 1 : 0;
                     }
+
+                    score /= dict.size(); //Score becomes probability
+                    partialResult[i] = score * (Math.log(1 / score) / Math.log(2));
                 }
 
-                double sum = 0;
-                for (double d : score) { sum += d; }
-                double p = (sum*1000)/dict.size();
-                
-                dict.put((String) element.getKey(), p*(Math.log(1/p)/Math.log(2)));
-                System.out.println(element.getKey() + " : " + element.getValue());
+                double finalScore = 0;
+                for (double d : partialResult) {
+                    finalScore += d;
+                }
+
+                dict.put((String) element.getKey(), finalScore);
+                //System.out.println(element.getKey() + " : " + element.getValue());
             }
             System.out.println(dict.size());
         } catch (IOException ex) {
 
-        }
-
-        System.out.println("Juguemos a Wordle");
-        System.out.println("Piensa una palabra ...");
-        System.out.println("Y dime si la acierto: ");
+        }*/
     }
 }
