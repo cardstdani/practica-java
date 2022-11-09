@@ -5,7 +5,7 @@ import java.io.*;
 
 class Practica {
     public static boolean checkString(String s1, String s2, String c) {
-        boolean out = false;
+        boolean out = new Random().nextBoolean();
 
         
         return out;
@@ -38,7 +38,7 @@ class Practica {
 
                 double sum = 0;
                 for (double d : score) { sum += d; }
-                double p = sum/dict.size();
+                double p = (sum*1000)/dict.size();
                 
                 dict.put((String) element.getKey(), p*(Math.log(1/p)/Math.log(2)));
                 System.out.println(element.getKey() + " : " + element.getValue());
