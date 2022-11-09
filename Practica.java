@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.io.*;
 
 class Practica {
-    final static int intentos = 5;
+    final static int intentos = 10;
     public static void main(String[] args) {
         String diccionario[] = generarDiccionario("./Diccionario.txt");
         
@@ -28,18 +28,54 @@ class Practica {
         String result = "";
         int prevIndex = 0;
         String oldSelectedWord = "";
-        for(int i = 0; i < diccionario.length; i++){
+        String searchedWord[] = new String[5];
+        String searchedLetter = "";
+        boolean have2 = false;
+        if(prevWord.length() == 5){
             for(int v = 0; v < entrada.length; v++){
                 if(entrada[v] == 1){
-                    
+                    searchedLetter = searchedLetter + Character.toString(prevWord.charAt(v));
                 }else if(entrada[v] == 2){
-
-                }else{
-
+                    have2 = true;
+                    searchedWord[v] = Character.toString(prevWord.charAt(v));
                 }
             }
-        }
-        return diccionario[(int)(Math.random() * diccionario.length + 1) - 1];
+            for(int i = 0; i < diccionario.length; i++){
+                if(!diccionario[i].equals(prevWord)){
+                    boolean pass = have2;
+                    if(have2){
+                        for (int v = 0; v < searchedWord.length; v++){
+                            if(pass){
+                                pass = (Character.toString(diccionario[i].charAt(v)).equals(searchedWord[v])) ? true:false;
+                            }
+                        }
+                    }
+
+
+                    if(pass){
+                        result = diccionario[i];
+                    }else{
+                        char[] palabra = diccionario[i].toCharArray();
+                        int coincidencias = 0;
+                        for(int v = 0; v < palabra.length; v++){
+                            for (int k = 0; k < searchedLetter.length();k++){
+                                if(Character.toString(palabra[v]).equals(Character.toString(searchedLetter.charAt(k)))){
+                                    coincidencias++;
+                                }
+                            }
+                        }
+                        if(searchedLetter.length() != 0 && coincidencias >= searchedLetter.length()){
+                            oldSelectedWord = result;
+                            result = diccionario[i];
+                        }
+                    }
+                }
+            }
+            if(result.equals("")){
+                result = diccionario[(int)(Math.random() * diccionario.length + 1) - 1];
+            }
+        }else result = diccionario[(int)(Math.random() * diccionario.length + 1) - 1];
+        return result;
     }
 
     public static String[] generarDiccionario(String ruta){
