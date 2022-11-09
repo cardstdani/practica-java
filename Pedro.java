@@ -3,7 +3,7 @@ import java.net.URL;
 import java.util.*;
 import java.io.*;
 
-class Practica {
+class Pedro {
     public static boolean checkString(String s1, String s2, String c) {
         /* PREc.
         todas las string de length 5
