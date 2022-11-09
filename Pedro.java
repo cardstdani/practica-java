@@ -82,18 +82,17 @@ class Pedro {
                     Iterator dictIterator2 = dict.entrySet().iterator();
                     while (dictIterator2.hasNext()) { //Por cada elemento en dict
                         Map.Entry e = (Map.Entry) dictIterator2.next();
-                        score += checkString((String) e.getKey(), (String) element.getKey(), combinations[i]) ? 1 : 0;
+                        score += checkString((String) e.getKey(), (String) element.getKey(), combinations[i]) ? 1.0 : 0.0;
                     }
 
-                    score /= dict.size(); //Score becomes probability
-                    partialResult[i] = score * (Math.log(1 / score) / Math.log(2));
+                    score /= Double.valueOf(dict.size()); //Score becomes probability
+                    partialResult[i] = score * (Math.log(1.0 / score) / Math.log(2));
                 }
 
                 double finalScore = 0;
                 for (double d : partialResult) {
                     finalScore += d;
                 }
-
                 dict.put((String) element.getKey(), finalScore);
                 System.out.println(element.getKey() + " : " + element.getValue());
             }
