@@ -4,6 +4,7 @@ import java.io.*;
 class Practica {
     final static int intentos = 10;
     public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
         String diccionario[] = generarDiccionario("./Diccionario.txt");
         
         
@@ -17,7 +18,7 @@ class Practica {
             String actualWord = generateRandomWord(diccionario, entrada, prevWord);
             System.out.println(actualWord);
             System.out.println("La hacerte ¿?: ");
-            Scanner in = new Scanner(System.in);
+            
             entrada = stringToIntArray(in.nextLine(), 5);
             prevWord = actualWord;
         }
