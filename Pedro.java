@@ -4,12 +4,10 @@ import java.util.*;
 import java.io.*;
 
 class Pedro {
-    public static boolean checkString(String s1, String s2, String c) {
+    public static boolean checkString(String s1, String s2, String c) { //Comprueba razonadamente que s1 se puede formar con s2 y c
         /* PREc.
         todas las string de length 5
         */
-        //boolean out = new Random().nextBoolean();
-
         HashMap<String, Boolean> noEsta = new HashMap<>();
         HashMap<String, ArrayList<ArrayList<Integer>>> esta = new HashMap<>();
 
@@ -51,7 +49,7 @@ class Pedro {
                 return false;
             }
             if (esta.containsKey(key)) {
-                if (esta.get(key).get(0).contains(i)) {
+                if (esta.get(key).get(0).contains(i) | !esta.get(key).get(1).contains(i)) {
                     return false;
                 }
             }
