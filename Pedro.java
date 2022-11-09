@@ -24,7 +24,7 @@ class Practica {
                     if (esta.containsKey(key)) {
                         esta.get(key).get(1).add(i);
                     } else {
-                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<ArrayList<Integer>>();
+                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
                         tmp.add(new ArrayList<>(Arrays.asList()));
                         tmp.add(new ArrayList<>(Arrays.asList(i)));
                         esta.put(key, tmp);
@@ -35,7 +35,7 @@ class Practica {
                     if (esta.containsKey(key)) {
                         esta.get(key).get(0).add(i);
                     } else {
-                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<ArrayList<Integer>>();
+                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
                         tmp.add(new ArrayList<>(Arrays.asList(i)));
                         tmp.add(new ArrayList<>(Arrays.asList()));
                         esta.put(key, tmp);
@@ -46,8 +46,14 @@ class Practica {
         }
 
         for (int i = 0; i < s1.length(); i++) {
-            if(noEsta.containsKey(String.valueOf(s1.charAt(i)))) {
+            String key = String.valueOf(s1.charAt(i));
+            if (noEsta.containsKey(key)) {
                 return false;
+            }
+            if (esta.containsKey(key)) {
+                if (esta.get(key).get(0).contains(i)) {
+                    return false;
+                }
             }
         }
 
@@ -55,8 +61,7 @@ class Practica {
     }
 
     public static void main(String[] args) {
-        System.out.println(checkString("HOLAS", "MUNDO", "01102"));
-        /*try {
+        try {
             URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
             Scanner s = new Scanner(url.openStream());
 
@@ -90,11 +95,11 @@ class Practica {
                 }
 
                 dict.put((String) element.getKey(), finalScore);
-                //System.out.println(element.getKey() + " : " + element.getValue());
+                System.out.println(element.getKey() + " : " + element.getValue());
             }
             System.out.println(dict.size());
         } catch (IOException ex) {
 
-        }*/
+        }
     }
 }
