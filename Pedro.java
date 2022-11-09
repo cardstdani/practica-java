@@ -5,7 +5,8 @@ import java.io.*;
 
 class Practica {
     public static boolean checkString(String s1, String s2, String c) {
-        return true;
+        boolean out = false;
+        return out;
     }
 
     public static void main(String[] args) {
@@ -20,21 +21,23 @@ class Practica {
             }
 
             Iterator dictIterator = dict.entrySet().iterator();
-            while (dictIterator.hasNext()) {
+            while (dictIterator.hasNext()) { //Por cada elemento en dict
                 Map.Entry element = (Map.Entry) dictIterator.next();
 
-                double score = 0;
+                double[] score = new double[combinations.length];
 
-                for(int i=0; i<combinations.length; i++) {
+                for(int i=0; i<combinations.length; i++) { //Por cada elemento en combinaciones
                     Iterator dictIterator2 = dict.entrySet().iterator();
-                    while (dictIterator2.hasNext()) {
+                    while (dictIterator2.hasNext()) { //Por cada elemento en dict
                         Map.Entry e = (Map.Entry) dictIterator2.next();
-                        score += checkString((String)e.getKey(), (String)element.getKey(), combinations[i]) ? 1:0;
+                        score[i] += checkString((String)e.getKey(), (String)element.getKey(), combinations[i]) ? 1.0:0.0;
                     }
                 }
 
-                score/=dict.size();
-                dict.put((String) element.getKey(), score);
+                double sum = 0;
+                for (double d : score) sum += d;
+                
+                dict.put((String) element.getKey(), sum/score.length);
                 System.out.println(element.getKey() + " : " + element.getValue());
             }
             System.out.println(dict.size());
