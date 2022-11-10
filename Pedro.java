@@ -92,10 +92,9 @@ class Pedro {
 
             for (int i = 0; i < combinations.length; i++) { //Por cada elemento en combinaciones
                 double p = 0;
-                Iterator dictIterator2 = dict.entrySet().iterator();
-                while (dictIterator2.hasNext()) { //Por cada elemento en dict
-                    Map.Entry e = (Map.Entry) dictIterator2.next();
-                    p += checkString((String) e.getKey(), (String) keyElement, combinations[i]) ? 1.0 : 0.0;
+                
+                for(Object keyE : dict.keySet().toArray()) { //Por cada elemento en dict
+                    p += checkString((String) keyE, (String) keyElement, combinations[i]) ? 1.0 : 0.0;
                 }
 
                 p /= Double.valueOf(dict.size()); //Partial score becomes PROBABILITY of x P(x)
