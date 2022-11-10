@@ -73,24 +73,21 @@ class Pedro {
             while (dictIterator.hasNext()) { //Por cada elemento en dict
                 Map.Entry element = (Map.Entry) dictIterator.next();
 
-                double[] partialResult = new double[combinations.length];
+                double finalScore = 0;
 
                 for (int i = 0; i < combinations.length; i++) { //Por cada elemento en combinaciones
-                    double score = 0;
+                    double p = 0;
                     Iterator dictIterator2 = dict.entrySet().iterator();
                     while (dictIterator2.hasNext()) { //Por cada elemento en dict
                         Map.Entry e = (Map.Entry) dictIterator2.next();
-                        score += checkString((String) e.getKey(), (String) element.getKey(), combinations[i]) ? 1.0 : 0.0;
+                        p += checkString((String) e.getKey(), (String) element.getKey(), combinations[i]) ? 1.0 : 0.0;
                     }
 
-                    score /= Double.valueOf(dict.size()); //Score becomes probability
-                    partialResult[i] = score * (Math.log(1.0 / score) / Math.log(2));
+                    p /= Double.valueOf(dict.size()); //Partial score becomes PROBABILITY of x P(x)
+                    finalScore += p * (Math.log(1.0 / p) / Math.log(2));
                 }
 
-                double finalScore = 0;
-                for (double d : partialResult) {
-                    finalScore += d;
-                }
+
                 dict.put((String) element.getKey(), finalScore);
                 System.out.println(element.getKey() + " : " + element.getValue());
             }
