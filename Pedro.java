@@ -3,7 +3,7 @@ import java.net.URL;
 import java.util.*;
 import java.io.*;
 
-class Pedro {
+class Main implements Runnable {
     public static boolean checkString(String s1, String s2, String c) { //Comprueba razonadamente que s1 se puede formar con s2 y c
         /* PREc.
         todas las string de length 5
@@ -106,8 +106,14 @@ class Pedro {
         }
         return dict;
     }
+    int totalThreads;
+    int thread;
+    public Main(int a, int b){
+        thread = a;
+        totalThreads = b;
+    }
 
-    public static void main(String[] args) {
+    public void run() {
         try {
             URL url = new URL("https://raw.githubusercontent.com/cardstdani/practica-java/main/Diccionario.txt");
             Scanner s = new Scanner(url.openStream());
@@ -117,11 +123,34 @@ class Pedro {
                 dict.put(s.next(), 0.0);
             }
 
-            sortMap2(dict);
+            int chunkSize = dict.size() / totalThreads;
+            System.out.println(chunkSize);
+            int initElement = chunkSize * thread; 
+            int actualEl = 0;
+            HashMap<String, Double> newDict = new HashMap<>();
+            for(Object keyElement : dict.keySet().toArray()) {
+                if(actualEl >= initElement && actualEl < initElement + chunkSize){
+                    newDict.put(""+keyElement, 0.0);  
+                }
+                actualEl++;
+            }
 
-            System.out.println(dict.size());
+            sortMap2(newDict);
+
+            System.out.println(newDict.size());
         } catch (IOException ex) {
 
+        }
+    }
+}
+
+
+class Pedro{
+    public static void main (String[] args){
+        int n = 8; // nummero de hilos
+        for(int i = 0; i < n; i++){
+            Thread object = new Thread(new Main(i,n));
+            object.start();
         }
     }
 }
