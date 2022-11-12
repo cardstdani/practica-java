@@ -28,18 +28,28 @@ class Practica {
             if (validar(entrada)) {
                 System.out.println("La hacerte ¿?: ");
                 for (int i = 0; i < entrada.length; i++) {
+                    char letra = word.charAt(i);
                     switch (entrada[i]) {
                         case 0: {
-
+                            for (int a = 0; a < posibleEstructura.length; a++) {
+                                posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), pushToArray(posibleEstructura[a][1], letra)};
+                            }
                             break;
                         }
                         case 1: {
-
+                            for (int a = 0; a < posibleEstructura.length; a++) {
+                                if (a == i) {
+                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), pushToArray(posibleEstructura[a][1], letra)};
+                                } else {
+                                    if(!in(posibleEstructura[a][0], letra) && in(posibleEstructura[a][1], letra)) {
+                                        posibleEstructura[a] = new char[][]{pushToArray(posibleEstructura[a][0], letra), deleteFromArray(posibleEstructura[a][1], letra)};
+                                    }
+                                }
+                            }
                             break;
                         }
                         case 2: {
-                            posibleEstructura[i][0] = new char[]{word.charAt(i)};
-                            posibleEstructura[i][1] = deleteFromArray(abecedario, word.charAt(i));
+                            posibleEstructura[i] = new char[][]{new char[]{letra}, deleteFromArray(abecedario, letra)};
                             break;
                         }
                     }
@@ -62,7 +72,7 @@ class Practica {
             boolean result = true;
             for (int j = 0; j < diccionario[i].length(); j++) {
                 char letra = diccionario[i].charAt(j);
-                if (in(estan[j][0], letra)) {
+                if (in(estan[j][1], letra)) {
                     result &= false;
                     break;
                 }
