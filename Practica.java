@@ -25,14 +25,14 @@ class Practica {
             entrada = stringToIntArray(in.nextLine(), 5);
 
 
-            if (validar(entrada)) {
+            if (validar(entrada, word, posibleEstructura)) {
                 System.out.println("La hacerte ¿?: ");
                 for (int i = 0; i < entrada.length; i++) {
                     char letra = word.charAt(i);
                     switch (entrada[i]) {
                         case 0: {
                             for (int a = 0; a < posibleEstructura.length; a++) {
-                                posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), pushToArray(posibleEstructura[a][1], letra)};
+                                if(!in(posibleEstructura[a][1], letra)) posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), pushToArray(posibleEstructura[a][1], letra)};
                             }
                             break;
                         }
@@ -83,7 +83,7 @@ class Practica {
     }
 
     //Método que valida que el usuario no haga trampas
-    public static boolean validar(int[] s) {
+    public static boolean validar(int[] s, String word, char[][][] posibleEstructura) {
         for (int i = 0; i < s.length; i++) {
             if (s[i] == -1) {
                 return false;
