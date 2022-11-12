@@ -8,7 +8,7 @@ class Practica {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario(".\\Diccionario.txt");
+        String[] diccionario = generarDiccionario("C:\\Users\\danie\\Desktop\\JavaProjects\\StandardJavaProject\\src\\Diccionario.txt");
         String[] diccionarioOriginal = diccionario;
 
         System.out.println("Juguemos a Wordle");
@@ -16,11 +16,11 @@ class Practica {
         System.out.println("Y dime si la acierto: ");
 
         int[] entrada = new int[]{0, 0, 0, 0, 0};
-        char[] noEstan = new char[]{};
-        char[][][] estan = new char[][][]{{{}, {}}, {{}, {}}, {{}, {}}, {{}, {}}, {{}, {}}};
+        char[] abecedario = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length);
-            String word = diccionario.length>0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionario.length)];
+            String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionario.length)];
             System.out.println(word);
             entrada = stringToIntArray(in.nextLine(), 5);
 
@@ -30,27 +30,24 @@ class Practica {
                 for (int i = 0; i < entrada.length; i++) {
                     switch (entrada[i]) {
                         case 0: {
-                            if (!in(noEstan, word.charAt(i))) {
-                                noEstan = pushToArray(noEstan, word.charAt(i));
-                            }
+
                             break;
                         }
                         case 1: {
-                            if (!in(estan[i][0], word.charAt(i))) {
-                                estan[i][0] = pushToArray(estan[i][0], word.charAt(i));
-                            }
+
                             break;
                         }
                         case 2: {
-                            if (estan[i][1].length < 1) {
-                                estan[i][1] = pushToArray(estan[i][1], word.charAt(i));
-                            }
+                            posibleEstructura[i][0] = new char[]{word.charAt(i)};
+                            posibleEstructura[i][1] = deleteFromArray(abecedario, word.charAt(i));
                             break;
                         }
                     }
                 }
+                System.out.println(Arrays.deepToString(posibleEstructura));
 
-                diccionario = updateDict(diccionario, noEstan, estan);
+
+                diccionario = updateDict(diccionario, posibleEstructura);
             } else {
                 System.out.println("Error, intenta otra vez");
                 intento--;
@@ -58,19 +55,19 @@ class Practica {
         }
     }
 
-    public static String[] updateDict(String[] diccionario, char[] noEstan, char[][][] estan) {
+    public static String[] updateDict(String[] diccionario, char[][][] estan) {
         String[] tmpDict = new String[]{};
 
         for (int i = 0; i < diccionario.length; i++) {
             boolean result = true;
             for (int j = 0; j < diccionario[i].length(); j++) {
                 char letra = diccionario[i].charAt(j);
-                if(in(noEstan,letra) | (estan[j][0].length>0)?in(estan[j][0],letra):false | (estan[j][1].length>0) ? letra!=estan[j][1][0]:false) {
+                if (in(estan[j][0], letra)) {
                     result &= false;
                     break;
                 }
             }
-            if(result) tmpDict = pushToArray(tmpDict, diccionario[i]);
+            if (result) tmpDict = pushToArray(tmpDict, diccionario[i]);
         }
         return tmpDict;
     }
@@ -128,6 +125,14 @@ class Practica {
             tmp[i] = arr[i];
         }
         tmp[arr.length] = elem;
+        return tmp;
+    }
+
+    public static char[] deleteFromArray(char[] arr, char elem) {
+        char[] tmp = new char[]{};
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != elem) tmp = pushToArray(tmp, arr[i]);
+        }
         return tmp;
     }
 
