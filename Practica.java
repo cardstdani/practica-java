@@ -20,9 +20,8 @@ class Practica {
         int[] entrada = new int[]{0, 0, 0, 0, 0};
         char[] abecedario = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
-        //En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que no pueden ir en dicha posición
+        //En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
         char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
-        char[] debenEstar = new char[]{};
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length); //DEBUG
 
@@ -31,33 +30,49 @@ class Practica {
             entrada = stringToIntArray(in.nextLine(), 5);
 
 
-            if (validar(entrada, word, posibleEstructura, debenEstar)) {
+            if (validar(entrada, word, posibleEstructura)) {
                 System.out.println("La hacerte ¿?: ");
                 for (int i = 0; i < entrada.length; i++) {
                     char letra = word.charAt(i);
                     switch (entrada[i]) {
                         case 0: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
-                                if (!in(posibleEstructura[a][1], letra) && posibleEstructura[a][0].length != 1)
-                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), pushToArray(posibleEstructura[a][1], letra)};
+                            boolean checkFromPosition = false;
+                            for (int a = i + 1; a < posibleEstructura.length; a++) {
+                                if (word.charAt(a) == letra & entrada[a] != 0) {
+                                    checkFromPosition = true;
+                                    break;
+                                }
+                            }
+
+
+                            for (int a = 0; a < (checkFromPosition ? i + 1 : posibleEstructura.length); a++) {
+                                if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
+                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
                             }
                             break;
                         }
                         case 1: {
                             for (int a = 0; a < posibleEstructura.length; a++) {
                                 if (a == i) {
-                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), pushToArray(posibleEstructura[a][1], letra)};
+                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
                                 } else {
-                                    if (posibleEstructura[a][0].length != 1 & !in(posibleEstructura[a][0], letra) & in(posibleEstructura[a][1], letra)) {
-                                        posibleEstructura[a] = new char[][]{pushToArray(posibleEstructura[a][0], letra), deleteFromArray(posibleEstructura[a][1], letra)};
+                                    if (posibleEstructura[a][0].length != 1) {
+                                        posibleEstructura[a] = new char[][]{posibleEstructura[a][0], pushToArray(posibleEstructura[a][1], letra)};
                                     }
                                 }
                             }
-                            debenEstar = pushToArray(debenEstar, letra);
                             break;
                         }
                         case 2: {
-                            posibleEstructura[i] = new char[][]{new char[]{letra}, deleteFromArray(abecedario, letra)};
+                            for (int a = 0; a < posibleEstructura.length; a++) {
+                                if (a == i) {
+                                    posibleEstructura[i] = new char[][]{new char[]{letra}, new char[]{}};
+                                } else {
+                                    if (in(posibleEstructura[a][1], letra)) {
+                                        posibleEstructura[a] = new char[][]{posibleEstructura[a][0], deleteFromArray(posibleEstructura[a][1], letra)};
+                                    }
+                                }
+                            }
                             break;
                         }
                     }
@@ -79,7 +94,7 @@ class Practica {
     }
 
     //Método que valida que el usuario no haga trampas
-    public static boolean validar(int[] entrada, String word, char[][][] posibleEstructura, char[] debenEstar) {
+    public static boolean validar(int[] entrada, String word, char[][][] posibleEstructura) {
         //Validación de entrada correcta
         for (int i = 0; i < entrada.length; i++) {
             if (entrada[i] == -1) {
@@ -92,24 +107,24 @@ class Practica {
             char letra = word.charAt(i);
             switch (entrada[i]) {
                 case 0: {
-                    if ((posibleEstructura[i][0].length == 1 && posibleEstructura[i][0][0] == letra) | in(debenEstar, letra)) {
+                    if (posibleEstructura[i][0] == new char[]{letra} | in(posibleEstructura[i][1], letra)) {
                         return false;
                     }
                     break;
                 }
                 case 1: {
-                    if (posibleEstructura[i][0].length == 1 && posibleEstructura[i][0][0] == letra) {
+                    if (posibleEstructura[i][0] == new char[]{letra}) {
                         return false;
                     }
 
                     boolean result = true;
                     for (int a = 0; a < posibleEstructura.length; a++) {
-                        if(!in(posibleEstructura[0][1], letra)) {
+                        if (in(posibleEstructura[a][0], letra)) {
                             result = false;
                             break;
                         }
                     }
-                    if(result) return false;
+                    if (result) return false;
                     break;
                 }
                 case 2: {
@@ -130,7 +145,7 @@ class Practica {
             boolean result = true;
             for (int j = 0; j < diccionario[i].length(); j++) {
                 char letra = diccionario[i].charAt(j);
-                if (in(estan[j][1], letra)) {
+                if (!in(estan[j][0], letra)) {
                     result &= false;
                     break;
                 }
