@@ -20,7 +20,9 @@ class Practica {
         int[] entrada = new int[]{0, 0, 0, 0, 0};
         char[] abecedario = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
-        //En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
+        /**
+         * En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
+         */
         char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length); //DEBUG
@@ -36,16 +38,7 @@ class Practica {
                     char letra = word.charAt(i);
                     switch (entrada[i]) {
                         case 0: {
-                            boolean checkFromPosition = false;
-                            for (int a = i + 1; a < posibleEstructura.length; a++) {
-                                if (word.charAt(a) == letra & entrada[a] != 0) {
-                                    checkFromPosition = true;
-                                    break;
-                                }
-                            }
-
-
-                            for (int a = 0; a < (checkFromPosition ? i + 1 : posibleEstructura.length); a++) {
+                            for (int a = 0; a < posibleEstructura.length; a++) {
                                 if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
                                     posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
                             }
@@ -105,15 +98,24 @@ class Practica {
         //Validación anti-hackers
         for (int i = 0; i < entrada.length; i++) {
             char letra = word.charAt(i);
+
+            //System.out.println(Arrays.deepToString(new char[][]{posibleEstructura[i][0]}));
             switch (entrada[i]) {
                 case 0: {
-                    if (posibleEstructura[i][0] == new char[]{letra} | in(posibleEstructura[i][1], letra)) {
+                    for (int a = i + 1; a < posibleEstructura.length; a++) {
+                        if (word.charAt(a) == letra & entrada[a] == 1) {
+                            return false;
+                        }
+                    }
+
+
+                    if ((posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra) | in(posibleEstructura[i][1], letra)) {
                         return false;
                     }
                     break;
                 }
                 case 1: {
-                    if (posibleEstructura[i][0] == new char[]{letra}) {
+                    if (posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra) {
                         return false;
                     }
 
