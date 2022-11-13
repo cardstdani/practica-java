@@ -10,7 +10,7 @@ class Practica {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario(".\\Diccionario.txt");
+        String[] diccionario = generarDiccionario(".\\Diccionario2.txt");
         String[] diccionarioOriginal = diccionario;
 
         System.out.println("Juguemos a Wordle");
@@ -22,6 +22,7 @@ class Practica {
 
         //En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que no pueden ir en dicha posición
         char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
+        char[] debenEstar = new char[]{};
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length); //DEBUG
 
@@ -30,7 +31,7 @@ class Practica {
             entrada = stringToIntArray(in.nextLine(), 5);
 
 
-            if (validar(entrada, word, posibleEstructura)) {
+            if (validar(entrada, word, posibleEstructura, debenEstar)) {
                 System.out.println("La hacerte ¿?: ");
                 for (int i = 0; i < entrada.length; i++) {
                     char letra = word.charAt(i);
@@ -52,6 +53,7 @@ class Practica {
                                     }
                                 }
                             }
+                            debenEstar = pushToArray(debenEstar, letra);
                             break;
                         }
                         case 2: {
@@ -77,7 +79,7 @@ class Practica {
     }
 
     //Método que valida que el usuario no haga trampas
-    public static boolean validar(int[] entrada, String word, char[][][] posibleEstructura) {
+    public static boolean validar(int[] entrada, String word, char[][][] posibleEstructura, char[] debenEstar) {
         //Validación de entrada correcta
         for (int i = 0; i < entrada.length; i++) {
             if (entrada[i] == -1) {
@@ -90,7 +92,7 @@ class Practica {
             char letra = word.charAt(i);
             switch (entrada[i]) {
                 case 0: {
-                    if (posibleEstructura[i][0].length == 1 && posibleEstructura[i][0][0] == letra) {
+                    if ((posibleEstructura[i][0].length == 1 && posibleEstructura[i][0][0] == letra) | in(debenEstar, letra)) {
                         return false;
                     }
                     break;
