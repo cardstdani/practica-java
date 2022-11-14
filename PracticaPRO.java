@@ -1,10 +1,12 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class PracticaPRO {
     final static int intentos = 6, maxInputLength = 5;
     final static HashSet<Character> abecedario = new HashSet<>(Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'));
+    final static Random r = new Random(300);
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
@@ -21,11 +23,11 @@ class PracticaPRO {
          * En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
          */
         ArrayList<ArrayList<HashSet<Character>>> posibleEstructura = new ArrayList<>(maxInputLength);
-        IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new ArrayList<HashSet<Character>>(Arrays.asList(abecedario, new HashSet<>()))));
+        IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new ArrayList<>(Arrays.asList(abecedario, new HashSet<>()))));
 
-        System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
         for (int intento = 0; intento < intentos; intento++) {
-            String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionarioOriginal.length)];
+            System.out.println(diccionario.length);
+            String word = diccionario.length > 0 ? diccionario[r.nextInt(diccionario.length)] : diccionarioOriginal[r.nextInt(diccionarioOriginal.length)];
             System.out.println(word);
             entrada = stringToIntArray(in.nextLine());
 
@@ -35,30 +37,31 @@ class PracticaPRO {
                     switch (entrada[i]) {
                         case 0: {
                             for (int a = 0; a < posibleEstructura.size(); a++) {
-                                if (posibleEstructura.get(a).get(0).size() != 1 & posibleEstructura.get(a).get(0).contains(letra))
-                                    posibleEstructura.get(a) = new ArrayList<>(Arrays.asList(posibleEstructura.get(a).get(0).remove(letra), posibleEstructura.get(a).get(1)));
+                                if (posibleEstructura.get(a).get(0).size() != 1 & posibleEstructura.get(a).get(0).contains(letra)) {
+                                    posibleEstructura.get(a).get(0).remove(letra);
+                                }
                             }
                             break;
                         }
                         case 1: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
+                            for (int a = 0; a < posibleEstructura.size(); a++) {
                                 if (a == i) {
-                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                                    posibleEstructura.get(a).get(0).remove(letra);
                                 } else {
-                                    if (posibleEstructura[a][0].length != 1) {
-                                        posibleEstructura[a] = new char[][]{posibleEstructura[a][0], pushToArray(posibleEstructura[a][1], letra)};
+                                    if (posibleEstructura.get(a).get(0).size() != 1) {
+                                        posibleEstructura.get(a).get(1).add(letra);
                                     }
                                 }
                             }
                             break;
                         }
                         case 2: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
+                            for (int a = 0; a < posibleEstructura.size(); a++) {
                                 if (a == i) {
-                                    posibleEstructura[i] = new char[][]{new char[]{letra}, new char[]{}};
+                                    posibleEstructura.set(i, new ArrayList<>(Arrays.asList(new HashSet<>(Arrays.asList(letra)), new HashSet<>())));
                                 } else {
-                                    if (in(posibleEstructura[a][1], letra)) {
-                                        posibleEstructura[a] = new char[][]{posibleEstructura[a][0], deleteFromArray(posibleEstructura[a][1], letra)};
+                                    if (posibleEstructura.get(a).get(1).contains(letra)) {
+                                        posibleEstructura.get(a).get(1).remove(letra);
                                     }
                                 }
                             }
@@ -68,12 +71,14 @@ class PracticaPRO {
                 }
 
                 diccionario = updateDict(diccionario, posibleEstructura);
+                System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
             } else {
                 if (entrada == new int[]{2, 2, 2, 2, 2}) {
                     System.out.println("Error, aunque se considera ganador");
                     break;
                 } else {
                     System.out.println("Error, intenta otra vez");
+                    System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
                     intento--;
                 }
             }
@@ -89,7 +94,7 @@ class PracticaPRO {
                 return false;
             }
 
-            allOnes &= entrada[i] == 1 & posibleEstructura[i][1].length > 0;
+            allOnes &= entrada[i] == 1 & posibleEstructura.get(i).get(1).size() > 0;
         }
         if (allOnes) return false;
 
@@ -105,19 +110,19 @@ class PracticaPRO {
                         }
                     }
 
-                    if ((posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra) | in(posibleEstructura[i][1], letra)) {
+                    if ((posibleEstructura.get(i).get(0).size() == 1 & posibleEstructura.get(i).get(0).contains(letra)) | posibleEstructura.get(i).get(1).contains(letra)) {
                         return false;
                     }
                     break;
                 }
                 case 1: {
-                    if (posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra) {
+                    if (posibleEstructura.get(i).get(0).size() == 1 & posibleEstructura.get(i).get(0).contains(letra)) {
                         return false;
                     }
 
                     boolean result = true;
-                    for (int a = 0; a < posibleEstructura.length; a++) {
-                        if (in(posibleEstructura[a][0], letra)) {
+                    for (int a = 0; a < posibleEstructura.size(); a++) {
+                        if (posibleEstructura.get(a).get(0).contains(letra)) {
                             result = false;
                             break;
                         }
@@ -126,7 +131,7 @@ class PracticaPRO {
                     break;
                 }
                 case 2: {
-                    if (!in(posibleEstructura[i][0], letra)) {
+                    if (!posibleEstructura.get(i).get(0).contains(letra)) {
                         return false;
                     }
                     break;
@@ -136,10 +141,20 @@ class PracticaPRO {
         return true;
     }
 
-    public static String[] updateDict(String[] diccionario, char[][][] estan) {
-        String[] tmpDict = new String[]{};
-
-        return tmpDict;
+    public static String[] updateDict(String[] diccionario, ArrayList<ArrayList<HashSet<Character>>> estan) {
+        ArrayList<String> tmpDict = new ArrayList<>();
+        for (int i = 0; i < diccionario.length; i++) {
+            boolean result = true;
+            for (int j = 0; j < diccionario[i].length(); j++) {
+                char letra = diccionario[i].charAt(j);
+                if (!estan.get(j).get(0).contains(letra) & !estan.get(j).get(1).contains(letra)) {
+                    result &= false;
+                    break;
+                }
+            }
+            if (result) tmpDict.add(diccionario[i]);
+        }
+        return tmpDict.toArray(new String[0]);
     }
 
     public static String[] generarDiccionario(String ruta) {
@@ -155,16 +170,12 @@ class PracticaPRO {
     }
 
     public static int[] stringToIntArray(String in) {
+        if (in.length() < 5) return new int[]{-1};
         int result[] = new int[maxInputLength];
-        char[] descomposicion = in.toCharArray();
+        ArrayList<Character> descomposicion = new ArrayList<>(in.chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
 
-        if (descomposicion.length < 5) {
-            result[0] = -1;
-            return result;
-        }
-
-        for (int i = 0; i < descomposicion.length && i < maxInputLength; i++) {
-            result[i] = descomposicion[i] >= '0' && descomposicion[i] <= '2' ? (int) descomposicion[i] - 48 : -1;
+        for (int i = 0; i < descomposicion.size() && i < maxInputLength; i++) {
+            result[i] = descomposicion.get(i) >= '0' && descomposicion.get(i) <= '2' ? (int) descomposicion.get(i) - 48 : -1;
         }
         return result;
     }
