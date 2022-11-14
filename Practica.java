@@ -8,14 +8,14 @@ class Practica {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario("C:\\Users\\danie\\Desktop\\JavaProjects\\StandardJavaProject\\src\\Diccionario2.txt");
+        String[] diccionario = generarDiccionario(".\\Diccionario2.txt");
         String[] diccionarioOriginal = diccionario;
 
         System.out.println("Juguemos a Wordle");
         System.out.println("Piensa una palabra ...");
         System.out.println("Y dime si la acierto: ");
 
-        int[] entrada = new int[]{0, 0, 0, 0, 0};
+        int[] entrada;
         char[] abecedario = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
         /**
