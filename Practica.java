@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.io.*;
 
 class Practica {
-    final static int intentos = 6;
+    final static int intentos = 6, maxInputLength = 5;
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
@@ -27,7 +27,7 @@ class Practica {
 
             String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionarioOriginal.length)];
             System.out.println(word);
-            entrada = stringToIntArray(in.nextLine(), 5);
+            entrada = stringToIntArray(in.nextLine());
 
 
             if (validar(entrada, word, posibleEstructura)) {
@@ -109,7 +109,6 @@ class Practica {
                         }
                     }
 
-
                     if ((posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra) | in(posibleEstructura[i][1], letra)) {
                         return false;
                     }
@@ -170,8 +169,8 @@ class Practica {
         return diccionario;
     }
 
-    public static int[] stringToIntArray(String in, int max) {
-        int result[] = new int[max];
+    public static int[] stringToIntArray(String in) {
+        int result[] = new int[maxInputLength];
         char[] descomposicion = in.toCharArray();
 
         if (descomposicion.length < 5) {
@@ -179,7 +178,7 @@ class Practica {
             return result;
         }
 
-        for (int i = 0; i < descomposicion.length && i < max; i++) {
+        for (int i = 0; i < descomposicion.length && i < maxInputLength; i++) {
             result[i] = descomposicion[i] >= '0' && descomposicion[i] <= '2' ? (int) descomposicion[i] - 48 : -1;
         }
         return result;
