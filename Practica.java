@@ -8,7 +8,7 @@ class Practica {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario("./Diccionario2.txt");
+        String[] diccionario = generarDiccionario("C:\\Users\\danie\\Desktop\\JavaProjects\\StandardJavaProject\\src\\Diccionario2.txt");
         String[] diccionarioOriginal = diccionario;
 
         System.out.println("Juguemos a Wordle");
@@ -92,8 +92,8 @@ class Practica {
             if (entrada[i] == -1) {
                 return false;
             }
-                        
-            allOnes &= entrada[i] == 1 & posibleEstructura[i][1].length>0;          
+
+            allOnes &= entrada[i] == 1 & posibleEstructura[i][1].length>0;
         }
         if (allOnes) return false;
 
