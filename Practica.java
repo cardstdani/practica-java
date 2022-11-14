@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -10,7 +8,7 @@ class Practica {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario(".\\Diccionario2.txt");
+        String[] diccionario = generarDiccionario("./Diccionario2.txt");
         String[] diccionarioOriginal = diccionario;
 
         System.out.println("Juguemos a Wordle");
@@ -89,17 +87,20 @@ class Practica {
     //Método que valida que el usuario no haga trampas
     public static boolean validar(int[] entrada, String word, char[][][] posibleEstructura) {
         //Validación de entrada correcta
+        boolean allOnes = true;
         for (int i = 0; i < entrada.length; i++) {
             if (entrada[i] == -1) {
                 return false;
             }
+                        
+            allOnes &= entrada[i] == 1 & posibleEstructura[i][1].length>0;          
         }
+        if (allOnes) return false;
 
         //Validación anti-hackers
         for (int i = 0; i < entrada.length; i++) {
             char letra = word.charAt(i);
 
-            //System.out.println(Arrays.deepToString(new char[][]{posibleEstructura[i][0]}));
             switch (entrada[i]) {
                 case 0: {
                     for (int a = i + 1; a < posibleEstructura.length; a++) {
