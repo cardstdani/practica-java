@@ -34,9 +34,9 @@ class PracticaPRO {
                     char letra = word.charAt(i);
                     switch (entrada[i]) {
                         case 0: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
-                                if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
-                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                            for (int a = 0; a < posibleEstructura.size(); a++) {
+                                if (posibleEstructura.get(a).get(0).size() != 1 & posibleEstructura.get(a).get(0).contains(letra))
+                                    posibleEstructura.get(a) = new ArrayList<>(Arrays.asList(posibleEstructura.get(a).get(0).remove(letra), posibleEstructura.get(a).get(1)));
                             }
                             break;
                         }
@@ -77,11 +77,11 @@ class PracticaPRO {
                     intento--;
                 }
             }
-        }*/
+        }
     }
 
     //Método que valida que el usuario no haga trampas
-    public static boolean validar(int[] entrada, String word, char[][][] posibleEstructura) {
+    public static boolean validar(int[] entrada, String word, ArrayList<ArrayList<HashSet<Character>>> posibleEstructura) {
         //Validación de entrada correcta
         boolean allOnes = true;
         for (int i = 0; i < entrada.length; i++) {
@@ -99,7 +99,7 @@ class PracticaPRO {
 
             switch (entrada[i]) {
                 case 0: {
-                    for (int a = i + 1; a < posibleEstructura.length; a++) {
+                    for (int a = i + 1; a < posibleEstructura.size(); a++) {
                         if (word.charAt(a) == letra & entrada[a] == 1) {
                             return false;
                         }
@@ -139,17 +139,6 @@ class PracticaPRO {
     public static String[] updateDict(String[] diccionario, char[][][] estan) {
         String[] tmpDict = new String[]{};
 
-        for (int i = 0; i < diccionario.length; i++) {
-            boolean result = true;
-            for (int j = 0; j < diccionario[i].length(); j++) {
-                char letra = diccionario[i].charAt(j);
-                if (!in(estan[j][0], letra)) {
-                    result &= false;
-                    break;
-                }
-            }
-            if (result) tmpDict = pushToArray(tmpDict, diccionario[i]);
-        }
         return tmpDict;
     }
 
