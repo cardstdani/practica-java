@@ -3,6 +3,20 @@ import java.io.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+class Letra {
+    HashSet<Character> estan;
+    ArrayList<Character> debenEstar;
+
+    public Letra(HashSet<Character> param1, ArrayList<Character> param2) {
+        estan = param1;
+        debenEstar = param2;
+    }
+
+    public String toString() {
+        return String.format("%s %s", estan.toString(), debenEstar.toString());
+    }
+}
+
 class PracticaPRO {
     final static int intentos = 6, maxInputLength = 5;
     final static HashSet<Character> abecedario = new HashSet<>(Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'));
@@ -22,9 +36,11 @@ class PracticaPRO {
         /**
          * En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
          */
-        ArrayList<ArrayList<HashSet<Character>>> posibleEstructura = new ArrayList<>(maxInputLength);
-        IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new ArrayList<>(Arrays.asList(abecedario, new HashSet<>()))));
+        ArrayList<Letra> posibleEstructura = new ArrayList<>(maxInputLength);
+        IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new Letra(abecedario, new ArrayList<>())));
 
+
+        posibleEstructura.get(0).estan.remove('S');
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length);
             String word = diccionario.length > 0 ? diccionario[r.nextInt(diccionario.length)] : diccionarioOriginal[r.nextInt(diccionarioOriginal.length)];
@@ -37,20 +53,18 @@ class PracticaPRO {
                     switch (entrada[i]) {
                         case 0: {
                             for (int a = 0; a < posibleEstructura.size(); a++) {
-                                if (posibleEstructura.get(a).get(0).size() != 1 & posibleEstructura.get(a).get(0).contains(letra)) {
-                                    posibleEstructura.get(a).get(0).remove(letra);
-                                }
+                                if (posibleEstructura.get(a).estan.size() != 1 & posibleEstructura.get(a).estan.contains(letra))
+                                    posibleEstructura.get(a).estan.remove(letra);
                             }
                             break;
                         }
                         case 1: {
                             for (int a = 0; a < posibleEstructura.size(); a++) {
                                 if (a == i) {
-                                    posibleEstructura.get(a).get(0).remove(letra);
+                                    posibleEstructura.get(a).estan.remove(letra);
                                 } else {
-                                    if (posibleEstructura.get(a).get(0).size() != 1) {
-                                        posibleEstructura.get(a).get(1).add(letra);
-                                    }
+                                    if (posibleEstructura.get(a).estan.size() != 1)
+                                        posibleEstructura.get(a).debenEstar.add(letra);
                                 }
                             }
                             break;
@@ -58,11 +72,10 @@ class PracticaPRO {
                         case 2: {
                             for (int a = 0; a < posibleEstructura.size(); a++) {
                                 if (a == i) {
-                                    posibleEstructura.set(i, new ArrayList<>(Arrays.asList(new HashSet<>(Arrays.asList(letra)), new HashSet<>())));
+                                    posibleEstructura.set(i, new Letra(new HashSet<>(Arrays.asList(letra)), new ArrayList<>()));
                                 } else {
-                                    if (posibleEstructura.get(a).get(1).contains(letra)) {
-                                        posibleEstructura.get(a).get(1).remove(letra);
-                                    }
+                                    if (posibleEstructura.get(a).debenEstar.contains(letra))
+                                        posibleEstructura.get(a).debenEstar.remove(letra);
                                 }
                             }
                             break;
@@ -71,22 +84,22 @@ class PracticaPRO {
                 }
 
                 diccionario = updateDict(diccionario, posibleEstructura);
-                System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
             } else {
                 if (entrada == new int[]{2, 2, 2, 2, 2}) {
                     System.out.println("Error, aunque se considera ganador");
                     break;
                 } else {
                     System.out.println("Error, intenta otra vez");
-                    System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
                     intento--;
                 }
             }
+
+            System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
         }
     }
 
     //Método que valida que el usuario no haga trampas
-    public static boolean validar(int[] entrada, String word, ArrayList<ArrayList<HashSet<Character>>> posibleEstructura) {
+    public static boolean validar(int[] entrada, String word, ArrayList<Letra> posibleEstructura) {
         //Validación de entrada correcta
         boolean allOnes = true;
         for (int i = 0; i < entrada.length; i++) {
@@ -94,7 +107,7 @@ class PracticaPRO {
                 return false;
             }
 
-            allOnes &= entrada[i] == 1 & posibleEstructura.get(i).get(1).size() > 0;
+            allOnes &= entrada[i] == 1 & posibleEstructura.get(i).debenEstar.size() > 0;
         }
         if (allOnes) return false;
 
@@ -110,19 +123,19 @@ class PracticaPRO {
                         }
                     }
 
-                    if ((posibleEstructura.get(i).get(0).size() == 1 & posibleEstructura.get(i).get(0).contains(letra)) | posibleEstructura.get(i).get(1).contains(letra)) {
+                    if ((posibleEstructura.get(i).estan.size() == 1 & posibleEstructura.get(i).estan.contains(letra)) | posibleEstructura.get(i).debenEstar.contains(letra)) {
                         return false;
                     }
                     break;
                 }
                 case 1: {
-                    if (posibleEstructura.get(i).get(0).size() == 1 & posibleEstructura.get(i).get(0).contains(letra)) {
+                    if (posibleEstructura.get(i).estan.size() == 1 & posibleEstructura.get(i).estan.contains(letra)) {
                         return false;
                     }
 
                     boolean result = true;
                     for (int a = 0; a < posibleEstructura.size(); a++) {
-                        if (posibleEstructura.get(a).get(0).contains(letra)) {
+                        if (posibleEstructura.get(a).estan.contains(letra)) {
                             result = false;
                             break;
                         }
@@ -131,7 +144,7 @@ class PracticaPRO {
                     break;
                 }
                 case 2: {
-                    if (!posibleEstructura.get(i).get(0).contains(letra)) {
+                    if (!posibleEstructura.get(i).estan.contains(letra)) {
                         return false;
                     }
                     break;
@@ -141,13 +154,13 @@ class PracticaPRO {
         return true;
     }
 
-    public static String[] updateDict(String[] diccionario, ArrayList<ArrayList<HashSet<Character>>> estan) {
+    public static String[] updateDict(String[] diccionario, ArrayList<Letra> estan) {
         ArrayList<String> tmpDict = new ArrayList<>();
         for (int i = 0; i < diccionario.length; i++) {
             boolean result = true;
             for (int j = 0; j < diccionario[i].length(); j++) {
                 char letra = diccionario[i].charAt(j);
-                if (!estan.get(j).get(0).contains(letra) & !estan.get(j).get(1).contains(letra)) {
+                if (!estan.get(j).estan.contains(letra) & !estan.get(j).debenEstar.contains(letra)) {
                     result &= false;
                     break;
                 }
