@@ -8,8 +8,8 @@ class Letra {
     ArrayList<Character> debenEstar;
 
     public Letra(HashSet<Character> param1, ArrayList<Character> param2) {
-        estan = param1;
-        debenEstar = param2;
+        estan = (HashSet<Character>) param1.clone();
+        debenEstar = (ArrayList<Character>) param2.clone();
     }
 
     public String toString() {
@@ -38,9 +38,6 @@ class PracticaPRO {
          */
         ArrayList<Letra> posibleEstructura = new ArrayList<>(maxInputLength);
         IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new Letra(abecedario, new ArrayList<>())));
-
-
-        posibleEstructura.get(0).estan.remove('S');
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length);
             String word = diccionario.length > 0 ? diccionario[r.nextInt(diccionario.length)] : diccionarioOriginal[r.nextInt(diccionarioOriginal.length)];
@@ -75,7 +72,7 @@ class PracticaPRO {
                                     posibleEstructura.set(i, new Letra(new HashSet<>(Arrays.asList(letra)), new ArrayList<>()));
                                 } else {
                                     if (posibleEstructura.get(a).debenEstar.contains(letra))
-                                        posibleEstructura.get(a).debenEstar.remove(letra);
+                                        posibleEstructura.get(a).debenEstar.remove((Character) letra);
                                 }
                             }
                             break;
@@ -144,9 +141,7 @@ class PracticaPRO {
                     break;
                 }
                 case 2: {
-                    if (!posibleEstructura.get(i).estan.contains(letra)) {
-                        return false;
-                    }
+                    if (!posibleEstructura.get(i).estan.contains(letra)) return false;
                     break;
                 }
             }
