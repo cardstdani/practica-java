@@ -37,7 +37,7 @@ class Practica {
             String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionarioOriginal.length)];
             System.out.println(word);
             System.out.println("La hacerte ¿?: ");
-            entrada = stringToIntArray(in.nextLine());
+            entrada = stringToIntArray(in.next());
 
 
             if (validar(entrada, word, posibleEstructura)) {
@@ -145,7 +145,7 @@ class Practica {
                         }
                     }
 
-                    if ((posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra) | in(posibleEstructura[i][1], letra)) {
+                    if ((posibleEstructura[i][0].length == 1 & posibleEstructura[i][0][0] == letra)) {
                         return false;
                     }
                     break;
