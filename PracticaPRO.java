@@ -25,7 +25,7 @@ class PracticaPRO {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        while (true) {
+        do {
             String[] diccionario = generarDiccionario(".\\Diccionario2.txt");
             String[] diccionarioOriginal = diccionario;
 
@@ -99,8 +99,7 @@ class PracticaPRO {
             boolean result = Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2});
             System.out.println(result ? "GANAR!!" : "PERDER!!");
             System.out.println("Quiere usted jugar una partida más?");
-            if(in.next().equalsIgnoreCase("no")) break;
-        }
+        } while (!in.next().equalsIgnoreCase("no"));
     }
 
     //Método que valida que el usuario no haga trampas
