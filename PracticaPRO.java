@@ -26,7 +26,7 @@ class PracticaPRO {
         Scanner in = new Scanner(System.in);
 
         do {
-            PriorityQueue<String> diccionario = generarDiccionario(".\\Diccionario2.txt");
+            PriorityQueue<String> diccionario = generarDiccionario("./Diccionario3.txt", new PriorityQueue<>());
             PriorityQueue<String> diccionarioOriginal = diccionario;
 
             System.out.println("Juguemos a Wordle");
@@ -228,7 +228,16 @@ class PracticaPRO {
     }
 
     public static PriorityQueue<String> updateDict(PriorityQueue<String> diccionario, ArrayList<Letra> estan) {
-        PriorityQueue<String> tmpDict = new PriorityQueue<>();
+        PriorityQueue<String> tmpDict = new PriorityQueue<>(new Comparator<String>() {
+            public int compare(String s1, String s2) {
+                System.out.println(s1 + " " + scoreWord(s1, diccionario)); //DEBUG
+                if (scoreWord(s2, diccionario) > scoreWord(s1, diccionario)) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
         for (String i : diccionario) {
             boolean result = true;
             for (int j = 0; j < i.length(); j++) {
@@ -243,8 +252,16 @@ class PracticaPRO {
         return tmpDict;
     }
 
-    public static PriorityQueue<String> generarDiccionario(String ruta) {
-        PriorityQueue<String> diccionario = new PriorityQueue<>(scoreWord);
+    public static PriorityQueue<String> generarDiccionario(String ruta, PriorityQueue<String> currentDict) {
+        PriorityQueue<String> diccionario = new PriorityQueue<String>(new Comparator<String>() {
+            public int compare(String s1, String s2) {
+                if (scoreWord(s2, currentDict) > scoreWord(s1, currentDict)) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
         try {
             File doc = new File(ruta);
             Scanner s = new Scanner(doc);
