@@ -99,9 +99,16 @@ class Practica {
             System.out.println("GANEEEE!");
         }else{
             System.out.println("Perdi :(");
-            System.out.print("¿Cual era la palabra oculta?: ");
-            String palabraOculta = in.nextLine();
+            System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes): ");
+            String palabraOculta = in.nextLine().toUpperCase();
             System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
+            boolean canInclude = in.nextLine().toLowerCase() == "si";
+
+            if(canInclude){
+                // LA INCLUYE
+            }else{
+                // NO LA INCLUYE
+            }
         }
 
         System.out.print("\n¿Otra partida? (Si, No): ");
