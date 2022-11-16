@@ -24,6 +24,9 @@ class Practica {
          * En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
          */
         char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
+
+        boolean win = false;
+
         for (int intento = 0; intento < intentos; intento++) {
             System.out.println(diccionario.length); //DEBUG
 
@@ -34,50 +37,53 @@ class Practica {
 
             if (validar(entrada, word, posibleEstructura)) {
                 System.out.println("La hacerte ¿?: ");
-                for (int i = 0; i < entrada.length; i++) {
-                    char letra = word.charAt(i);
-                    switch (entrada[i]) {
-                        case 0: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
-                                if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
-                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                if(Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})){
+                    intento = intentos;
+                    win = true;
+                }else{
+                    for (int i = 0; i < entrada.length; i++) {
+                        char letra = word.charAt(i);
+                        switch (entrada[i]) {
+                            case 0: {
+                                for (int a = 0; a < posibleEstructura.length; a++) {
+                                    if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
+                                        posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                                }
+                                break;
                             }
-                            break;
-                        }
-                        case 1: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
-                                if (a == i) {
-                                    posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
-                                } else {
-                                    if (posibleEstructura[a][0].length != 1) {
-                                        posibleEstructura[a] = new char[][]{posibleEstructura[a][0], pushToArray(posibleEstructura[a][1], letra)};
+                            case 1: {
+                                for (int a = 0; a < posibleEstructura.length; a++) {
+                                    if (a == i) {
+                                        posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                                    } else {
+                                        if (posibleEstructura[a][0].length != 1) {
+                                            posibleEstructura[a] = new char[][]{posibleEstructura[a][0], pushToArray(posibleEstructura[a][1], letra)};
+                                        }
                                     }
                                 }
+                                break;
                             }
-                            break;
-                        }
-                        case 2: {
-                            for (int a = 0; a < posibleEstructura.length; a++) {
-                                if (a == i) {
-                                    posibleEstructura[i] = new char[][]{new char[]{letra}, new char[]{}};
-                                } else {
-                                    if (in(posibleEstructura[a][1], letra)) {
-                                        posibleEstructura[a] = new char[][]{posibleEstructura[a][0], deleteFromArray(posibleEstructura[a][1], letra)};
+                            case 2: {
+                                for (int a = 0; a < posibleEstructura.length; a++) {
+                                    if (a == i) {
+                                        posibleEstructura[i] = new char[][]{new char[]{letra}, new char[]{}};
+                                    } else {
+                                        if (in(posibleEstructura[a][1], letra)) {
+                                            posibleEstructura[a] = new char[][]{posibleEstructura[a][0], deleteFromArray(posibleEstructura[a][1], letra)};
+                                        }
                                     }
                                 }
+                                break;
                             }
-                            break;
                         }
                     }
+                    System.out.println(Arrays.deepToString(posibleEstructura)); //DEBUG
                 }
-                System.out.println(Arrays.deepToString(posibleEstructura)); //DEBUG
-
-
-                diccionario = updateDict(diccionario, posibleEstructura);
             } else {
-                if (entrada == new int[]{2, 2, 2, 2, 2}) {
+                if (Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})) {
                     System.out.println("Error, aunque se considera ganador");
-                    break;
+                    intento = intentos;
+                    win = true;
                 } else {
                     System.out.println("Error, intenta otra vez");
                     intento--;
