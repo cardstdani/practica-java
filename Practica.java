@@ -8,8 +8,10 @@ class Practica {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario(".\\Diccionario2.txt");
+        String[] diccionario = generarDiccionario("./Diccionario2.txt"); // mejor poner ./ en vez de .\\ si no no funca en linux
         String[] diccionarioOriginal = diccionario;
+        debugStringArray(diccionarioOriginal); // DEBUG
+        debugStringArray(diccionario); // DEBUG
 
         System.out.println("Juguemos a Wordle");
         System.out.println("Piensa una palabra ...");
@@ -226,5 +228,13 @@ class Practica {
             }
         }
         return false;
+    }
+
+    public static void debugStringArray(String arr[]){
+        System.out.print("\n{ ");
+        for (int i = 0; i < arr.length;i++){
+            System.out.print(arr[i]+", ");
+        }
+        System.out.println("}");
     }
 }
