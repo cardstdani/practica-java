@@ -7,6 +7,10 @@ class Practica {
     final static int intentos = 6, maxInputLength = 5;
 
     public static void main(String[] args) {
+        jugar();
+    }
+
+    public static void jugar(){
         Scanner in = new Scanner(System.in);
         String[] diccionario = generarDiccionario("./Diccionario2.txt"); // mejor poner ./ en vez de .\\ si no no funca en linux
         String[] diccionarioOriginal = diccionario;
@@ -32,11 +36,11 @@ class Practica {
 
             String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionarioOriginal.length)];
             System.out.println(word);
+            System.out.println("La hacerte ¿?: ");
             entrada = stringToIntArray(in.nextLine());
 
 
             if (validar(entrada, word, posibleEstructura)) {
-                System.out.println("La hacerte ¿?: ");
                 if(Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})){
                     intento = intentos;
                     win = true;
@@ -89,6 +93,23 @@ class Practica {
                     intento--;
                 }
             }
+        }
+
+        if(win){
+            System.out.println("GANEEEE!");
+        }else{
+            System.out.println("Perdi :(");
+            System.out.print("¿Cual era la palabra oculta?: ");
+            String palabraOculta = in.nextLine();
+            System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
+        }
+
+        System.out.print("\n¿Otra partida? (Si, No): ");
+        String newGame = in.nextLine().toLowerCase();
+        if(newGame.equals("si")){
+            jugar();
+        }else if(newGame.equals("no")){
+            System.out.println("Hasta la próxima :)");
         }
     }
 
