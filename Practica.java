@@ -5,6 +5,7 @@ import java.io.*;
 
 class Practica {
     final static int intentos = 6, maxInputLength = 5;
+    final static String rutaDicc = "./Diccionario2.txt";
 
     public static void main(String[] args) {
         jugar();
@@ -12,7 +13,7 @@ class Practica {
 
     public static void jugar(){
         Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario("./Diccionario2.txt"); // mejor poner ./ en vez de .\\ si no no funca en linux
+        String[] diccionario = generarDiccionario(rutaDicc); // mejor poner ./ en vez de .\\ si no no funca en linux
         String[] diccionarioOriginal = diccionario;
         debugStringArray(diccionarioOriginal); // DEBUG
         debugStringArray(diccionario); // DEBUG
@@ -100,14 +101,16 @@ class Practica {
             System.out.println("GANEEEE!");
         }else{
             System.out.println("Perdi :(");
-            System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes): ");
-            String palabraOculta = in.nextLine().toUpperCase();
+
+            String palabraOculta = "";
+            do{
+                System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes ni mierdas raras): ");
+                palabraOculta = in.nextLine().toUpperCase();
+            }while(palabraOculta.length() != maxInputLength);
             System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
 
             if(in.nextLine().equalsIgnoreCase("si")){
-                // LA INCLUYE
-            }else{
-                // NO LA INCLUYE
+                addWordToOriginalDicc(palabraOculta, diccionarioOriginal);
             }
         }
 
@@ -269,5 +272,30 @@ class Practica {
             System.out.print(arr[i]+", ");
         }
         System.out.println("}");
+    }
+
+    public static void addWordToOriginalDicc(String word, String[] dicc){
+        if(dicc.length < 99){
+            try {
+                File doc = new File(ruta);
+                Scanner s = new Scanner(doc);
+                String file = (s.useDelimiter("\\A").next());
+                FileWriter writer = new FileWriter(rutaDicc);
+                writer.write(file+word);
+                writer.close();   
+            } catch (Exception err) {
+                
+            }
+        }else{
+            System.out.println("No me entran mas palabras en el diccionario.");
+        }
+    }
+
+    public static String stringArrayToString(String[] arr){
+        String result = "";
+        for (int i = 0; i<arr.length;i++){
+            result = result + arr[i] + " ";
+        }
+        return result;
     }
 }
