@@ -26,7 +26,7 @@ class PracticaPRO {
         Scanner in = new Scanner(System.in);
 
         do {
-            PriorityQueue<String> diccionario = generarDiccionario("./Diccionario3.txt", new PriorityQueue<>());
+            PriorityQueue<String> diccionario = generarDiccionario("./Diccionario.txt", new PriorityQueue<>());
             PriorityQueue<String> diccionarioOriginal = diccionario;
 
             System.out.println("Juguemos a Wordle");
@@ -40,6 +40,10 @@ class PracticaPRO {
              */
             ArrayList<Letra> posibleEstructura = new ArrayList<>(maxInputLength);
             IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new Letra(abecedario, new ArrayList<>())));
+
+            diccionario = updateDict(diccionario, posibleEstructura);
+            System.out.println(diccionario);
+
             for (int intento = 0; (intento < intentos) & !Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2}); intento++) {
                 System.out.println(diccionario.size());
                 String word = diccionario.size() > 0 ? diccionario.peek() : diccionarioOriginal.peek();
@@ -116,7 +120,8 @@ class PracticaPRO {
             p /= Double.valueOf(dict.size()); //Partial score becomes PROBABILITY of x P(x)
             finalScore += p * (Math.log(1.0 / p) / Math.log(2));
         }
-        return finalScore;
+        System.out.println(word + " " + finalScore);
+        return -finalScore;
     }
 
     public static boolean checkString(String s1, String s2, String c) { //Comprueba razonadamente que s1 se puede formar con s2 y c
@@ -228,16 +233,7 @@ class PracticaPRO {
     }
 
     public static PriorityQueue<String> updateDict(PriorityQueue<String> diccionario, ArrayList<Letra> estan) {
-        PriorityQueue<String> tmpDict = new PriorityQueue<>(new Comparator<String>() {
-            public int compare(String s1, String s2) {
-                System.out.println(s1 + " " + scoreWord(s1, diccionario)); //DEBUG
-                if (scoreWord(s2, diccionario) > scoreWord(s1, diccionario)) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-        });
+        PriorityQueue<String> tmpDict = new PriorityQueue<>((i, j) -> Double.compare(scoreWord(i, diccionario), scoreWord(j, diccionario)));
         for (String i : diccionario) {
             boolean result = true;
             for (int j = 0; j < i.length(); j++) {
@@ -253,7 +249,7 @@ class PracticaPRO {
     }
 
     public static PriorityQueue<String> generarDiccionario(String ruta, PriorityQueue<String> currentDict) {
-        PriorityQueue<String> diccionario = new PriorityQueue<String>(new Comparator<String>() {
+        /*PriorityQueue<String> diccionario = new PriorityQueue<String>(new Comparator<String>() {
             public int compare(String s1, String s2) {
                 if (scoreWord(s2, currentDict) > scoreWord(s1, currentDict)) {
                     return -1;
@@ -261,11 +257,15 @@ class PracticaPRO {
                     return 1;
                 }
             }
-        });
+        });*/
+
+        PriorityQueue<String> diccionario = new PriorityQueue<>((i, j) -> Double.compare(scoreWord(i, currentDict), scoreWord(j, currentDict)));
         try {
             File doc = new File(ruta);
             Scanner s = new Scanner(doc);
-            diccionario.addAll(Arrays.asList((s.useDelimiter("\\A").next()).split(" ")));
+            for(String i : (s.useDelimiter("\\A").next()).split(" ")) {
+                diccionario.add(i);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
