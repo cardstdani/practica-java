@@ -103,9 +103,8 @@ class Practica {
             System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes): ");
             String palabraOculta = in.nextLine().toUpperCase();
             System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
-            boolean canInclude = in.nextLine().toLowerCase() == "si";
 
-            if(canInclude){
+            if(in.nextLine().equalsIgnoreCase("si")){
                 // LA INCLUYE
             }else{
                 // NO LA INCLUYE
@@ -113,10 +112,9 @@ class Practica {
         }
 
         System.out.print("\n¿Otra partida? (Si, No): ");
-        String newGame = in.nextLine().toLowerCase();
-        if(newGame.equals("si")){
+        if(in.nextLine().equalsIgnoreCase("si")){
             jugar();
-        }else if(newGame.equals("no")){
+        }else if(in.nextLine().equalsIgnoreCase("no")){
             System.out.println("Hasta la próxima :)");
         }
     }
