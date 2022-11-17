@@ -81,6 +81,7 @@ class Practica {
                             }
                         }
                     }
+                    diccionario = updateDict(diccionario, posibleEstructura);
                     System.out.println(Arrays.deepToString(posibleEstructura)); //DEBUG
                 }
             } else {
