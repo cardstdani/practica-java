@@ -18,83 +18,7 @@ class Letra {
     }
 }
 
-class ParalelScoringClass implements Callable {
-    public static boolean checkString(String s1, String s2, String c) { //Comprueba razonadamente que s1 se puede formar con s2 y c
-        /* PREc.
-        todas las string de length 5
-        */
-        HashMap<String, Boolean> noEsta = new HashMap<>();
-        HashMap<String, ArrayList<ArrayList<Integer>>> esta = new HashMap<>();
-
-        for (int i = 0; i < s2.length(); i++) {
-            String key = String.valueOf(s2.charAt(i));
-            switch (c.charAt(i)) {
-                case '0': {
-                    noEsta.put(key, true);
-                    break;
-                }
-                case '1': {
-                    if (esta.containsKey(key)) {
-                        esta.get(key).get(1).add(i);
-                    } else {
-                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
-                        tmp.add(new ArrayList<>(Arrays.asList()));
-                        tmp.add(new ArrayList<>(Arrays.asList(i)));
-                        esta.put(key, tmp);
-                    }
-                    break;
-                }
-                case '2': {
-                    if (esta.containsKey(key)) {
-                        esta.get(key).get(0).add(i);
-                    } else {
-                        ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
-                        tmp.add(new ArrayList<>(Arrays.asList(i)));
-                        tmp.add(new ArrayList<>(Arrays.asList()));
-                        esta.put(key, tmp);
-                    }
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < s1.length(); i++) {
-            String key = String.valueOf(s1.charAt(i));
-            if (noEsta.containsKey(key)) {
-                return false;
-            }
-            if (esta.containsKey(key)) {
-                if (esta.get(key).get(0).contains(i) | !esta.get(key).get(1).contains(i)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    int thread;
-    String word, combination;
-    String[] dict;
-
-    public ParalelScoringClass(int a, String[] wholeDict, String c, String d) {
-        thread = a;
-        dict = wholeDict;
-        word = c;
-        combination = d;
-    }
-
-    @Override
-    public Double call() {
-        double p = 0;
-        for (String word2 : dict) { //Por cada elemento en dict
-            p += checkString(word2, word, combination) ? 1.0 : 0.0;
-        }
-        return p;
-    }
-}
-
-class ParalelMapUpdateClass implements Callable {
+class ParalelMapUpdateClass implements Callable<LinkedHashMap<String, Double>> {
     int thread, chunkSize;
     String[] dict;
 
@@ -105,18 +29,6 @@ class ParalelMapUpdateClass implements Callable {
         for (String i : combinations) { //Por cada elemento en combinaciones
             double p = 0;
 
-            /*for (int j = 0; j < n; j++) {
-                RunnableFuture<Double> object = new FutureTask<>(new ParalelScoringClass(j, Arrays.copyOfRange(dict.keySet().toArray(new String[0]), j * chunkSize, chunkSize * (j + 1)), word, i));
-                Thread t = new Thread(object);
-                t.start();
-                try {
-                    p += object.get();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            }*/
             for (String word2 : dict) { //Por cada elemento en dict
                 p += checkString(word2, word, i) ? 1.0 : 0.0;
             }
@@ -125,7 +37,7 @@ class ParalelMapUpdateClass implements Callable {
             finalScore += p * (Math.log(1.0 / p) / Math.log(2));
         }
         System.out.println(word + " " + finalScore);
-        return -finalScore;
+        return finalScore;
     }
 
     public static boolean checkString(String s1, String s2, String c) { //Comprueba razonadamente que s1 se puede formar con s2 y c
@@ -147,7 +59,7 @@ class ParalelMapUpdateClass implements Callable {
                         esta.get(key).get(1).add(i);
                     } else {
                         ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
-                        tmp.add(new ArrayList<>(Arrays.asList()));
+                        tmp.add(new ArrayList<>());
                         tmp.add(new ArrayList<>(Arrays.asList(i)));
                         esta.put(key, tmp);
                     }
@@ -159,7 +71,7 @@ class ParalelMapUpdateClass implements Callable {
                     } else {
                         ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
                         tmp.add(new ArrayList<>(Arrays.asList(i)));
-                        tmp.add(new ArrayList<>(Arrays.asList()));
+                        tmp.add(new ArrayList<>());
                         esta.put(key, tmp);
                     }
                     break;
@@ -191,9 +103,8 @@ class ParalelMapUpdateClass implements Callable {
     @Override
     public LinkedHashMap<String, Double> call() {
         LinkedHashMap<String, Double> newDict = new LinkedHashMap<>();
-        for (int i = 0; i < dict.length; i++) {
-            if (i > (thread * chunkSize) & i < ((thread + 1) * chunkSize))
-                newDict.put(dict[i], scoreWord(dict[i], dict));
+        for (int i = (thread * chunkSize); i < ((thread + 1) * chunkSize); i++) {
+            newDict.put(dict[i], scoreWord(dict[i], dict));
         }
         return newDict;
     }
@@ -201,13 +112,14 @@ class ParalelMapUpdateClass implements Callable {
 
 class PracticaPRO {
     final static int intentos = 6, maxInputLength = 5;
+    public final static int n = Runtime.getRuntime().availableProcessors()*10; // numero de hilos
     final static HashSet<Character> abecedario = new HashSet<>(Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'));
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
         do {
-            LinkedHashMap<String, Double> diccionario = generarDiccionario("./Diccionario2.txt", new LinkedHashMap<>());
+            LinkedHashMap<String, Double> diccionario = generarDiccionario("./Diccionario3.txt");
             LinkedHashMap<String, Double> diccionarioOriginal = diccionario;
 
             System.out.println("Juguemos a Wordle");
@@ -355,25 +267,27 @@ class PracticaPRO {
             if (result) tmpDict.put(i, 0.0);
         }
 
-        int n = Runtime.getRuntime().availableProcessors(); // numero de hilos
         int chunkSize = (tmpDict.size() / n);
+        ArrayList<RunnableFuture<LinkedHashMap<String, Double>>> threads = new ArrayList<>();
+        String[] keySet = tmpDict.keySet().toArray(new String[0]);
         for (int i = 0; i < n; i++) {
-            RunnableFuture<LinkedHashMap<String, Double>> object = new FutureTask<>(new ParalelMapUpdateClass(i, chunkSize, tmpDict.keySet().toArray(new String[0])));
+            RunnableFuture<LinkedHashMap<String, Double>> object = new FutureTask<>(new ParalelMapUpdateClass(i, chunkSize, keySet));
             Thread t = new Thread(object);
+            threads.add(object);
             t.start();
-            /*try {
-                tmpDict.putAll(object.get());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }*/
         }
 
+        for (RunnableFuture<LinkedHashMap<String, Double>> t : threads) {
+            try {
+                tmpDict.putAll(t.get());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         return tmpDict;
     }
 
-    public static LinkedHashMap<String, Double> generarDiccionario(String ruta, LinkedHashMap<String, Double> currentDict) {
+    public static LinkedHashMap<String, Double> generarDiccionario(String ruta) {
         LinkedHashMap<String, Double> diccionario = new LinkedHashMap<>();
         try {
             File doc = new File(ruta);
@@ -390,7 +304,7 @@ class PracticaPRO {
     public static int[] stringToIntArray(String in) {
         if (in.length() < 5) return new int[]{-1};
         int[] result = new int[maxInputLength];
-        ArrayList<Character> descomposicion = new ArrayList<>(in.chars().parallel().mapToObj(i -> (char) i).collect(Collectors.toList()));
+        ArrayList<Character> descomposicion = new ArrayList<>(in.chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
 
         for (int i = 0; i < descomposicion.size() && i < maxInputLength; i++) {
             result[i] = descomposicion.get(i) >= '0' && descomposicion.get(i) <= '2' ? (int) descomposicion.get(i) - 48 : -1;
