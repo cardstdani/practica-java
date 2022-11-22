@@ -59,13 +59,6 @@ class PracticaRegex {
             System.out.println("Y dime si la acierto: ");
 
             int[] entrada = {0, 0, 0, 0, 0};
-
-            /*
-              En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
-             */
-            ArrayList<Letra> posibleEstructura = new ArrayList<>(maxInputLength);
-            IntStream.range(0, maxInputLength).forEach(i -> posibleEstructura.add(new Letra(abecedario, new ArrayList<>())));
-
             diccionario = updateDict(diccionario, "^[A-Z][A-Z][A-Z][A-Z][A-Z]$");
             String globalPattern = "";
             for (int intento = 0; (intento < intentos) & !Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2}); intento++) {
@@ -88,8 +81,6 @@ class PracticaRegex {
                         intento--;
                     }
                 }
-
-                System.out.println(Arrays.deepToString(posibleEstructura.toArray()));
             }
 
             boolean result = Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2});
