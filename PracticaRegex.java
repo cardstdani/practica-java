@@ -44,8 +44,7 @@ class ParalelMapUpdate implements Callable<LinkedHashMap<String, Double>> {
 
 class PracticaRegex {
     public final static int intentos = 6, maxInputLength = 5;
-    public final static int n = Runtime.getRuntime().availableProcessors() * 5; // numero de hilos
-    final static HashSet<Character> abecedario = new HashSet<>(Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'));
+    public final static int n = Runtime.getRuntime().availableProcessors(); // numero de hilos
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
@@ -64,7 +63,7 @@ class PracticaRegex {
             for (int intento = 0; (intento < intentos) & !Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2}); intento++) {
                 String word = Collections.max(diccionario.size() > 0 ? diccionario.entrySet() : diccionarioOriginal.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
 
-                System.out.println(diccionario.size() + " " + diccionario.toString());
+                System.out.println(diccionario.size() + " " + diccionario);
                 System.out.println(word);
                 entrada = stringToIntArray(in.next());
 
@@ -91,7 +90,7 @@ class PracticaRegex {
     }
 
     public static String generatePattern(int[] entrada, String word) {
-        String pattern = "";
+        StringBuilder pattern = new StringBuilder();
         LinkedHashSet<Character> procesed = new LinkedHashSet<>();
 
         for (int j = 0; j < entrada.length; j++) {
@@ -104,8 +103,8 @@ class PracticaRegex {
                 } else {
                     procesed.add(letra);
                 }
-                pattern += new String[]{!condition ? String.format("(?=[^%s]*$)", letra) : "", String.format("(?!.{%s}%s)(?=.*%s)", j, letra, letra),
-                        String.format("(?=.{%s}%s)", j, letra)}[entrada[j]];
+                pattern.append(new String[]{!condition ? String.format("(?=[^%s]*$)", letra) : "", String.format("(?!.{%s}%s)(?=.*%s)", j, letra, letra),
+                        String.format("(?=.{%s}%s)", j, letra)}[entrada[j]]);
             }
         }
 
@@ -157,8 +156,8 @@ class PracticaRegex {
         ExecutorService pool = Executors.newFixedThreadPool(n);
         for (int i = 0; i < n; i++) {
             RunnableFuture<LinkedHashMap<String, Double>> object = new FutureTask<>(new ParalelMapUpdate(i, chunkSize, keySet));
-            pool.execute(object);
             threads.add(object);
+            pool.execute(object);
         }
 
         for (RunnableFuture<LinkedHashMap<String, Double>> t : threads) {
