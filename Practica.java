@@ -5,13 +5,14 @@ import java.io.*;
 
 class Practica {
     final static int intentos = 6, maxInputLength = 5;
-    final static String rutaDicc = "./Diccionario2.txt";
+    final static String rutaDicc = "./Diccionario2.txt", rutaLogs = "./Logs.txt";
 
     public static void main(String[] args) {
         jugar();
     }
 
     public static void jugar(){
+        printLogs(rutaLogs);
         Scanner in = new Scanner(System.in);
         String[] diccionario = generarDiccionario(rutaDicc); // mejor poner ./ en vez de .\\ si no no funca en linux
         String[] diccionarioOriginal = diccionario;
@@ -105,21 +106,26 @@ class Practica {
             String palabraOculta = "";
             do{
                 System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes ni mierdas raras): ");
-                palabraOculta = in.nextLine().toUpperCase();
+                palabraOculta = in.next().toUpperCase();
             }while(palabraOculta.length() != maxInputLength);
             System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
 
-            if(in.nextLine().equalsIgnoreCase("si")){
-                addWordToOriginalDicc(palabraOculta, diccionarioOriginal);
+            if(in.next().equalsIgnoreCase("si")){
+                addWordToOriginalDicc(palabraOculta, diccionarioOriginal, rutaDicc);
             }
         }
 
         System.out.print("\n¿Otra partida? (Si, No): ");
-        if(in.nextLine().equalsIgnoreCase("si")){
+        String other = in.next();
+        if(other.equalsIgnoreCase("si")){
             jugar();
-        }else if(in.nextLine().equalsIgnoreCase("no")){
+        }else if(other.equalsIgnoreCase("no")){
             System.out.println("Hasta la próxima :)");
         }
+
+        generateLog(rutaLogs, win);
+
+        printLogs(rutaLogs);
     }
 
     //Método que valida que el usuario no haga trampas
@@ -222,6 +228,15 @@ class Practica {
         return result;
     }
 
+    public static String intArrayToString(int[] in) {
+        String result = "";
+
+        for (int i = 0; i < in.length; i++) {
+            result = result+in[i] + " ";
+        }
+        return result;
+    }
+
     //Posible overriding
     public static char[] pushToArray(char[] arr, char elem) {
         char[] tmp = new char[arr.length + 1];
@@ -274,14 +289,14 @@ class Practica {
         System.out.println("}");
     }
 
-    public static void addWordToOriginalDicc(String word, String[] dicc){
+    public static void addWordToOriginalDicc(String word, String[] dicc, String ruta){
         if(dicc.length < 99){
             try {
                 File doc = new File(ruta);
                 Scanner s = new Scanner(doc);
                 String file = (s.useDelimiter("\\A").next());
-                FileWriter writer = new FileWriter(rutaDicc);
-                writer.write(file+word);
+                FileWriter writer = new FileWriter(ruta);
+                writer.write(file+" "+word);
                 writer.close();   
             } catch (Exception err) {
                 
@@ -296,6 +311,49 @@ class Practica {
         for (int i = 0; i<arr.length;i++){
             result = result + arr[i] + " ";
         }
+        return result;
+    }
+
+    public static void printLogs(String ruta){
+        int[] logs = getLogs(ruta);
+
+        System.out.println("--------"+"\nPartidas Jugadas: "+logs[0]+"\nPartidas Ganadas por el usuario: "+logs[1]+"\nPartidas Perdidas por el usuario: "+logs[2]+"\n--------");
+    }
+
+    public static void generateLog(String ruta, boolean win){
+        File doc = new File(ruta);
+
+        try { 
+            int[] logs = getLogs(ruta);
+            doc.createNewFile(); 
+            FileWriter writer = new FileWriter(doc);
+
+            logs[0]++;
+
+            if(win){
+                logs[2]++;
+            }else{
+                logs[1]++;
+            }
+            
+            writer.write(intArrayToString(logs));
+            writer.close();
+        } catch (Exception e) { }
+    }
+
+    public static int[] getLogs(String ruta){
+        File doc = new File(ruta);
+        int[] result = {0,0,0};
+        try {
+            Scanner s = new Scanner(doc);
+
+            String file = (s.useDelimiter("\\A").next());
+            
+            Scanner i = new Scanner(file);
+            for(int k = 0; k < result.length; k++)
+                result[k] = i.nextInt();
+        } catch (Exception e) { }
+        
         return result;
     }
 }
