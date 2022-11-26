@@ -9,7 +9,6 @@ class ParalelMapUpdate implements Callable<LinkedHashMap<String, Double>> {
     String[] dict;
 
     public static double scoreWord(String word, String[] dict) {
-        //return 0.0;
         double finalScore = 0;
 
         for (String i : PracticaRegex.combinations) { //Por cada elemento en combinaciones
@@ -18,7 +17,7 @@ class ParalelMapUpdate implements Callable<LinkedHashMap<String, Double>> {
             double p =  IntStream.range(0, dict.length).mapToObj(j -> dict[j].matches(pattern) ? 1.0 : 0.0).mapToDouble(f -> f.doubleValue()).parallel().sum();
 
             p /= dict.length; //Partial score becomes PROBABILITY of x P(x)
-            finalScore += p * (Math.log(1.0 / p) / Math.log(2));
+            finalScore += p>0 ? p * (Math.log(p) / Math.log(2)) : 0;
         }
         return finalScore;
     }
@@ -48,7 +47,7 @@ class PracticaRegex {
         Scanner in = new Scanner(System.in);
 
         do {
-            LinkedHashMap<String, Double> diccionario = generarDiccionario("./Diccionario3.txt");
+            LinkedHashMap<String, Double> diccionario = generarDiccionario("./Diccionario.txt");
             LinkedHashMap<String, Double> diccionarioOriginal = diccionario;
 
             System.out.println("Juguemos a Wordle\nPiensa una palabra ...\nY dime si la acierto: ");
@@ -99,7 +98,7 @@ class PracticaRegex {
                 } else {
                     procesed.add(letra);
                 }
-                pattern.append(new String[]{!condition ? String.format("(?=[^%s]*$)", letra) : "", String.format("(?!.{%s}%s)(?=.*%s)", j, letra, letra),
+                pattern.append(new String[]{!condition ? String.format("(?=[^%s]*$)", letra) : String.format("(?!.{%s}%s)", j, letra), String.format("(?!.{%s}%s)(?=.*%s)", j, letra, letra),
                         String.format("(?=.{%s}%s)", j, letra)}[entrada[j]]);
             }
         }
