@@ -5,127 +5,129 @@ import java.io.*;
 
 class Practica {
     final static int intentos = 6, maxInputLength = 5;
-    final static String rutaDicc = "./Diccionario2.txt", rutaLogs = "./Logs.txt";
+    final static String rutaDicc = "./Diccionario.txt", rutaLogs = "./Logs.txt";
 
     public static void main(String[] args) {
-        jugar();
-    }
+        boolean repeat = false;
+        do{
+            printLogs(rutaLogs);
+            Scanner in = new Scanner(System.in);
+            String[] diccionario = generarDiccionario(rutaDicc); // mejor poner ./ en vez de .\\ si no no funca en linux
+            String[] diccionarioOriginal = diccionario;
+            debugStringArray(diccionarioOriginal); // DEBUG
+            debugStringArray(diccionario); // DEBUG
 
-    public static void jugar(){
-        printLogs(rutaLogs);
-        Scanner in = new Scanner(System.in);
-        String[] diccionario = generarDiccionario(rutaDicc); // mejor poner ./ en vez de .\\ si no no funca en linux
-        String[] diccionarioOriginal = diccionario;
-        debugStringArray(diccionarioOriginal); // DEBUG
-        debugStringArray(diccionario); // DEBUG
+            System.out.println("Juguemos a Wordle");
+            System.out.println("Piensa una palabra ...");
+            System.out.println("Y dime si la acierto: ");
 
-        System.out.println("Juguemos a Wordle");
-        System.out.println("Piensa una palabra ...");
-        System.out.println("Y dime si la acierto: ");
+            int[] entrada;
+            char[] abecedario = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
-        int[] entrada;
-        char[] abecedario = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+            /**
+             * En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
+             */
+            char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
 
-        /**
-         * En este array se almacenan las letras que pueden ir en cada posicion en el primer sub-array. En el segundo, todas las que deben ir
-         */
-        char[][][] posibleEstructura = new char[][][]{{abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}, {abecedario, {}}};
+            boolean win = false;
 
-        boolean win = false;
+            for (int intento = 0; intento < intentos; intento++) {
+                System.out.println(diccionario.length); //DEBUG
 
-        for (int intento = 0; intento < intentos; intento++) {
-            System.out.println(diccionario.length); //DEBUG
-
-            String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionarioOriginal.length)];
-            System.out.println(word);
-            System.out.println("La hacerte ¿?: ");
-            entrada = stringToIntArray(in.next());
+                String word = diccionario.length > 0 ? diccionario[new Random().nextInt(diccionario.length)] : diccionarioOriginal[new Random().nextInt(diccionarioOriginal.length)];
+                System.out.println(word);
+                System.out.println("La hacerte ¿?: ");
+                entrada = stringToIntArray(in.next());
 
 
-            if (validar(entrada, word, posibleEstructura)) {
-                if(Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})){
-                    intento = intentos;
-                    win = true;
-                }else{
-                    for (int i = 0; i < entrada.length; i++) {
-                        char letra = word.charAt(i);
-                        switch (entrada[i]) {
-                            case 0: {
-                                for (int a = 0; a < posibleEstructura.length; a++) {
-                                    if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
-                                        posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                if (validar(entrada, word, posibleEstructura)) {
+                    if(Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})){
+                        intento = intentos;
+                        win = true;
+                    }else{
+                        for (int i = 0; i < entrada.length; i++) {
+                            char letra = word.charAt(i);
+                            switch (entrada[i]) {
+                                case 0: {
+                                    for (int a = 0; a < posibleEstructura.length; a++) {
+                                        if (posibleEstructura[a][0].length != 1 & in(posibleEstructura[a][0], letra))
+                                            posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                            case 1: {
-                                for (int a = 0; a < posibleEstructura.length; a++) {
-                                    if (a == i) {
-                                        posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
-                                    } else {
-                                        if (posibleEstructura[a][0].length != 1) {
-                                            posibleEstructura[a] = new char[][]{posibleEstructura[a][0], pushToArray(posibleEstructura[a][1], letra)};
+                                case 1: {
+                                    for (int a = 0; a < posibleEstructura.length; a++) {
+                                        if (a == i) {
+                                            posibleEstructura[a] = new char[][]{deleteFromArray(posibleEstructura[a][0], letra), posibleEstructura[a][1]};
+                                        } else {
+                                            if (posibleEstructura[a][0].length != 1) {
+                                                posibleEstructura[a] = new char[][]{posibleEstructura[a][0], pushToArray(posibleEstructura[a][1], letra)};
+                                            }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                            case 2: {
-                                for (int a = 0; a < posibleEstructura.length; a++) {
-                                    if (a == i) {
-                                        posibleEstructura[i] = new char[][]{new char[]{letra}, new char[]{}};
-                                    } else {
-                                        if (in(posibleEstructura[a][1], letra)) {
-                                            posibleEstructura[a] = new char[][]{posibleEstructura[a][0], deleteFromArray(posibleEstructura[a][1], letra)};
+                                case 2: {
+                                    for (int a = 0; a < posibleEstructura.length; a++) {
+                                        if (a == i) {
+                                            posibleEstructura[i] = new char[][]{new char[]{letra}, new char[]{}};
+                                        } else {
+                                            if (in(posibleEstructura[a][1], letra)) {
+                                                posibleEstructura[a] = new char[][]{posibleEstructura[a][0], deleteFromArray(posibleEstructura[a][1], letra)};
+                                            }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
                             }
                         }
+                        diccionario = updateDict(diccionario, posibleEstructura);
+                        System.out.println(Arrays.deepToString(posibleEstructura)); //DEBUG
                     }
-                    diccionario = updateDict(diccionario, posibleEstructura);
-                    System.out.println(Arrays.deepToString(posibleEstructura)); //DEBUG
-                }
-            } else {
-                if (Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})) {
-                    System.out.println("Error, aunque se considera ganador");
-                    intento = intentos;
-                    win = true;
                 } else {
-                    System.out.println("Error, intenta otra vez");
-                    intento--;
+                    if (Arrays.equals(entrada, new int[]{2, 2, 2, 2, 2})) {
+                        System.out.println("Error, aunque se considera ganador");
+                        intento = intentos;
+                        win = true;
+                    } else {
+                        System.out.println("Error, intenta otra vez");
+                        intento--;
+                    }
                 }
             }
-        }
 
-        if(win){
-            System.out.println("GANEEEE!");
-        }else{
-            System.out.println("Perdi :(");
+            if(win){
+                System.out.println("GANEEEE!");
+            }else{
+                System.out.println("Perdi :(");
 
-            String palabraOculta = "";
-            do{
-                System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes ni mierdas raras): ");
-                palabraOculta = in.next().toUpperCase();
-            }while(palabraOculta.length() != maxInputLength);
-            System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
+                String palabraOculta = "";
+                do{
+                    System.out.print("¿Cual era la palabra oculta? (Introducir sin tildes ni mierdas raras): ");
+                    palabraOculta = in.next().toUpperCase();
+                }while(palabraOculta.length() != maxInputLength);
+                System.out.print("\n¿La puedo añadir a mi diccionario? (Si, No): ");
 
-            if(in.next().equalsIgnoreCase("si")){
-                addWordToOriginalDicc(palabraOculta, diccionarioOriginal, rutaDicc);
+                if(in.next().equalsIgnoreCase("si")){
+                    addWordToOriginalDicc(palabraOculta, diccionarioOriginal, rutaDicc);
+                }
             }
-        }
 
-        System.out.print("\n¿Otra partida? (Si, No): ");
-        String other = in.next();
-        if(other.equalsIgnoreCase("si")){
-            jugar();
-        }else if(other.equalsIgnoreCase("no")){
-            System.out.println("Hasta la próxima :)");
-        }
+            System.out.print("\n¿Otra partida? (Si, No): ");
+            String other = in.next();
+            if(other.equalsIgnoreCase("si")){
+                repeat = true;
+            }else if(other.equalsIgnoreCase("no")){
+                System.out.println("Hasta la próxima :)");
+                repeat = false;
+            }else{
+                repeat = false;
+            }
 
-        generateLog(rutaLogs, win);
+            generateLog(rutaLogs, win);
 
-        printLogs(rutaLogs);
+            printLogs(rutaLogs);
+        }while(repeat);
     }
 
     //Método que valida que el usuario no haga trampas

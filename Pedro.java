@@ -121,7 +121,7 @@ class ThreadClass implements Runnable {
 
 class Pedro{
     public static void main (String[] args){
-        int n = 8; // nummero de hilos
+        int n = Runtime.getRuntime().availableProcessors(); // numero de hilos
         for(int i = 0; i < n; i++){
             Thread object = new Thread(new ThreadClass(i,n));
             object.start();
