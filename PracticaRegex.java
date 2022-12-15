@@ -46,9 +46,10 @@ class PracticaRegex {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        generatePattern(new int[]{2, 0, 1, 0, 0}, "ABABA");
 
         do {
-            LinkedHashMap<String, Double> diccionario = generarDiccionario("https://raw.githubusercontent.com/cardstdani/practica-java/main/Data/Diccionario4.txt");
+            LinkedHashMap<String, Double> diccionario = generarDiccionario("https://raw.githubusercontent.com/cardstdani/practica-java/main/Data/Diccionario3.txt");
             LinkedHashMap<String, Double> diccionarioOriginal = diccionario;
 
             System.out.println("Juguemos a Wordle\nPiensa una palabra ...\nY dime si la acierto: ");
@@ -98,8 +99,10 @@ class PracticaRegex {
                 } else {
                     procesed.add(letra);
                 }
-                pattern.append(new String[]{!condition ? String.format("(?=[^%s]*$)", letra) : String.format("(?!.{%s}%s)", j, letra), String.format("(?!.{%s}%s)(?=.*%s)", j, letra, letra),
-                        String.format("(?=.{%s}%s)", j, letra)}[entrada[j]]);
+
+                pattern.append(new String[]{!condition ? String.format("(?=[^%s]*$)", letra) : String.format("(?!.{%s}%s)", j, letra),
+                        String.format("(?!.{%s}%s)(?=.*%s)", j, letra, letra),
+                        String.format("(?=.{%s}%s)", j, letra) + IntStream.range(j + 1, entrada.length).mapToObj(k -> (word.charAt(k) == letra & (entrada[k] == 0 | entrada[k] == 1)) ? String.format("(?!.{%s}%s)", k, letra) : "").collect(Collectors.joining(""))}[entrada[j]]);
             }
         }
 
